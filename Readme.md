@@ -16,5 +16,5 @@ An AI-powered assistant that:
 ## 🛠 Setup
 1. Clone this repo:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/email-telegram-ai-agent.git
+   git clone https://github.com/rohitrrg/email-telegram-agent.git
    cd email-telegram-ai-agent
