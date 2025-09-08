@@ -18,3 +18,4 @@ An AI-powered assistant that:
    ```bash
    git clone https://github.com/rohitrrg/email-telegram-agent.git
    cd email-telegram-ai-agent
+   python src/main.py
