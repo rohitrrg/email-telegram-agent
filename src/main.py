@@ -1,3 +1,4 @@
+import os
 import asyncio
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
@@ -6,11 +7,23 @@ from summarizer import summarize_email
 from telegram_handler import latest_email, start, handle_response
 
 # ============ CONFIG ============
-with open("config/telegram_token.txt") as f:
-    TELEGRAM_TOKEN = f.read().strip()
+# TELEGRAM_CHAT_ID = "809102927"  # replace with your chat ID
 
-TELEGRAM_CHAT_ID = "809102927"  # replace with your chat ID
+# Gmail credentials
+base_path = "config"
+os.mkdir('config')
+GMAIL_CREDENTIALS = os.getenv("GMAIL_CREDENTIALS")
+with open(os.path.join(base_path, "gmail_credentials.json"), "w") as f:
+    print(GMAIL_CREDENTIALS)
+    f.write(str(GMAIL_CREDENTIALS))
 
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
+GMAIL_TOKEN = os.getenv("GMAIL_TOKEN")
+with open(os.path.join("token.json"), "w") as f:
+    f.write(str(GMAIL_TOKEN))
 
 # Async email polling task
 async def poll_emails(app):
@@ -23,7 +36,7 @@ async def poll_emails(app):
             latest_email.update(email)
             summary = summarize_email(email["body"], email["subject"])
             text = (
-                f"📧 New Email from {email['from']}\n\n\n"
+                f"📧 New Email from {email['from']}\n\n"
                 f"Subject: {email['subject']}\n\n"
                 f"{summary}"
             )
@@ -43,7 +56,6 @@ async def main():
 
     print("🚀 Email ↔ Telegram Agent running...")
     await app.run_polling()
-
 
 if __name__ == "__main__":
     import nest_asyncio
