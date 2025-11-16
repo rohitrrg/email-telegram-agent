@@ -1,18 +1,19 @@
+httplib2==0.20.0
+
+# Google API libraries
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
 
+# Telegram
 python-telegram-bot==20.0a6
 
+# LangChain (minimal modern setup)
 langchain
-langchain-core
 langchain-openai
-langchain-community
-openai
 
+# Utilities
 nest_asyncio
-
 requests
 python-dotenv
-
 httpx-sse==0.4.0
