@@ -14,8 +14,7 @@ base_path = "config"
 os.mkdir('config')
 GMAIL_CREDENTIALS = os.getenv("GMAIL_CREDENTIALS")
 with open(os.path.join(base_path, "gmail_credentials.json"), "w") as f:
-    print(GMAIL_CREDENTIALS)
-    f.write(str(GMAIL_CREDENTIALS))
+    f.write(GMAIL_CREDENTIALS)
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 
@@ -23,7 +22,7 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 GMAIL_TOKEN = os.getenv("GMAIL_TOKEN")
 with open(os.path.join("token.json"), "w") as f:
-    f.write(str(GMAIL_TOKEN))
+    f.write(GMAIL_TOKEN)
 
 # Async email polling task
 async def poll_emails(app):
