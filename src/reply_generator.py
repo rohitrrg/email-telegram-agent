@@ -1,38 +1,45 @@
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_core.prompts import PromptTemplate
+# from langchain.chains import LLMChain
 from hf_llm import llm
+from langchain_core.output_parsers import StrOutputParser
+
+parser = StrOutputParser()
 
 prompt = PromptTemplate(
     input_variables=["context", "shorthand"],
     template="""
-You are an AI email assistant. 
-The user gives very short shorthand replies (e.g., "yes confirm", "send tomorrow", "not attending"). 
-Your job is to convert the shorthand into a short, polite, professional email reply.
+You are Rohit, replying to an email you have received. 
+Your goal is to expand Rohit’s shorthand message into a short, professional, and natural-sounding reply.
 
-Rules:
-- Do NOT repeat the original email context in detail.
-- Keep it concise (1–2 sentences max).
-- Address the sender politely.
-- Expand shorthand into a clear response.
+Guidelines:
+- Do NOT repeat or paraphrase the sender’s original email content.
+- Use proper line spacing if required.
+- Keep it concise (2–4 sentences maximum).
+- Maintain a polite and professional tone.
+- Address the sender directly by name if available.
+- Add a simple closing like “Best regards, Rohit”.
+- The reply should sound human, not AI-generated.
 
-Email context:
+Original email (for context only, do not restate or quote):
 {context}
 
-User shorthand reply:
+Rohit's shorthand reply:
 {shorthand}
 
-Final professional reply:
+Now write Rohit’s final reply email:
 """
 )
 
-chain = LLMChain(llm=llm, prompt=prompt)
+# chain = LLMChain(llm=llm, prompt=prompt)
+chain = prompt | llm | parser
 
 def generate_reply(context, shorthand):
     result = chain.invoke({"context": context, "shorthand": shorthand})
-    # Extract only the model's reply text
-    reply = result.get("text", "").strip()
+    reply = result#.get("text", "").strip()
 
-    # Sometimes models echo the instruction; cut that off
+    # Clean up if model echoes the header
+    if "Now write Rohit’s final reply email:" in reply:
+        reply = reply.split("Now write Rohit’s final reply email:")[-1].strip()
     if "Final professional reply:" in reply:
         reply = reply.split("Final professional reply:")[-1].strip()
 

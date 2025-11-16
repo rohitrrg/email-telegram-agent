@@ -1,4 +1,3 @@
-import os
 import asyncio
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
@@ -24,9 +23,9 @@ async def poll_emails(app):
             latest_email.update(email)
             summary = summarize_email(email["body"], email["subject"])
             text = (
-                f"📧 New Email from {email['from']}\n"
+                f"📧 New Email from {email['from']}\n\n\n"
                 f"Subject: {email['subject']}\n\n"
-                f"Summary: {summary}"
+                f"{summary}"
             )
             # ✅ await required for v20+
             await app.bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=text)

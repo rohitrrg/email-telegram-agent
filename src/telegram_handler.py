@@ -2,7 +2,6 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from reply_generator import generate_reply
 from gmail_handler import gmail_service, send_email_reply
-from gmail_handler import gmail_service, send_email_reply
 
 
 # Store latest email globally

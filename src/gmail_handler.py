@@ -1,5 +1,4 @@
 import os, base64
-from email.mime.text import MIMEText
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -21,7 +20,7 @@ def check_new_email(service, last_id=None):
     results = service.users().messages().list(
     userId='me',
     labelIds=['INBOX'],
-    q="is:unread category:primary"
+    q="is:unread (category:primary OR category:updates)"
 ).execute()
     messages = results.get('messages', [])
     if not messages:
@@ -39,11 +38,19 @@ def check_new_email(service, last_id=None):
     message_id = next((h["value"] for h in headers if h["name"] == "Message-ID"), "")
 
     body = ""
+    # 1. Check if the message has parts (multipart email)
     if "parts" in msg["payload"]:
-        body = base64.urlsafe_b64decode(msg["payload"]["parts"][0]["body"]["data"]).decode("utf-8")
+        for part in msg["payload"]["parts"]:
+            # Check for text/plain mimeType and ensure 'body' and 'data' exist
+            if part.get("mimeType") == "text/plain" and part.get("body", {}).get("data"):
+                # Decode and use the first plaintext part found
+                body = base64.urlsafe_b64decode(part["body"]["data"]).decode("utf-8")
+                break # Exit the loop once the body is found
+
+    # 2. Handle simple, non-multipart messages (already existing logic)
     elif "body" in msg["payload"] and "data" in msg["payload"]["body"]:
         body = base64.urlsafe_b64decode(msg["payload"]["body"]["data"]).decode("utf-8")
-
+    
     return {
         "id": msg_id,
         "threadId": msg["threadId"],
